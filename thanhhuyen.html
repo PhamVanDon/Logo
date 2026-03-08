@@ -5048,6 +5048,7 @@
       // Khi user click button thì toggle play/pause
       btn.addEventListener("click", () => {
         if (audio.paused) {
+          audio.muted = false;
           audio.play();
           btn.textContent = "🔊";
           startRotate();
@@ -5061,7 +5062,8 @@
       // Đảm bảo autoplay khi user lần đầu tương tác (nếu cần)
       function tryPlay() {
         if (audio.paused) {
-          audio.play().then(() => {
+            audio.muted = false;
+            audio.play().then(() => {
             btn.textContent = "🔊";
             startRotate();
           }).catch(() => {/* bị chặn thì thôi */ });
