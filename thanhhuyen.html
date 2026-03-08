@@ -5031,70 +5031,47 @@
     <!-- Toggle button -->
     <button id="toggle-music" aria-label="Bật/tắt nhạc">🔇</button>
 
-    <script>javascript
-document.addEventListener("DOMContentLoaded", function () {
-    const audio = document.getElementById("background-music");
-    const btn = document.getElementById("toggle-music");
+    <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const audio = document.getElementById("background-music");
+      const btn = document.getElementById("toggle-music");
 
-    if (!audio || !btn) return;
+      audio.volume = 0.8;
 
-    audio.volume = 0.8;
+      function startRotate() {
+        btn.style.animation = "rotate 2s linear infinite";
+      }
+      function stopRotate() {
+        btn.style.animation = "none";
+      }
 
-    function updateUI() {
-        if (!audio.paused) {
-            btn.textContent = "🔊";
-            btn.classList.add("playing");
+      // Khi user click button thì toggle play/pause
+      btn.addEventListener("click", () => {
+        if (audio.paused) {
+          audio.play();
+          btn.textContent = "🔊";
+          startRotate();
         } else {
-            btn.textContent = "🔇";
-            btn.classList.remove("playing");
+          audio.pause();
+          btn.textContent = "🔇";
+          stopRotate();
         }
-    }
+      });
 
-    function playMusic() {
-        audio.muted = false;
-        audio.play().then(updateUI).catch(err => {
-            console.log("Play blocked:", err);
-        });
-    }
-
-    function pauseMusic() {
-        audio.pause();
-        updateUI();
-    }
-
-    // Toggle button
-    btn.addEventListener("click", function(e) {
-        e.stopPropagation();
-        audio.paused ? playMusic() : pauseMusic();
-    });
-
-    btn.addEventListener("touchend", function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        audio.paused ? playMusic() : pauseMusic();
-    });
-
-    // Autoplay muted khi load
-    audio.play().catch(() => {});
-
-    // Khi user tương tác thì bật tiếng
-    function handleUserInteraction() {
-        console.log('User interaction detected');
-        if (audio.muted) {
-            audio.muted = false;
-            audio.play().catch(() => {});
+      // Đảm bảo autoplay khi user lần đầu tương tác (nếu cần)
+      function tryPlay() {
+        if (audio.paused) {
+          audio.play().then(() => {
+            btn.textContent = "🔊";
+            startRotate();
+          }).catch(() => {/* bị chặn thì thôi */ });
         }
-    }
-
-    // Bắt cả click, scroll, touch và drag trên điện thoại
-    ["click", "scroll", "touchstart", "touchmove", "touchend", "pointerdown"].forEach(event => {
-        document.addEventListener(event, handleUserInteraction, { once: true });
+      }
+      window.addEventListener("scroll", tryPlay, { once: true });
+      document.addEventListener("click", tryPlay, { once: true });
+      document.addEventListener("touchstart", tryPlay, { once: true });
     });
-
-    audio.addEventListener("play", updateUI);
-    audio.addEventListener("pause", updateUI);
-});
-</script>
+  </script>
 </body>
 
 </html>
