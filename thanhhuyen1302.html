@@ -3606,10 +3606,6 @@
             background-image: url("https://w.ladicdn.com/s450x450/649340684a3700001217851c/7-20250726083947-kiv4v.png");
         }
 
-        #SECTION19 {
-            height: 200.7px;
-        }
-
         #SECTION22 {
             height: 214.6px;
         }
@@ -4055,7 +4051,7 @@
                     <h3 class='ladi-headline'>Tiệc mừng đầy tháng</h3>
                 </div>
                 <div id="PARAGRAPH5" class='ladi-element'>
-                    <div class='ladi-paragraph'>VÀO LÚC: 11H00</div>
+                    <div class='ladi-paragraph'>VÀO LÚC: 10H00</div>
                 </div>
                 <div id="HEADLINE27" class='ladi-element'>
                     <h3 class='ladi-headline'>15<br></h3>
@@ -4328,10 +4324,6 @@
                     </div>
                 </div>
             </div>
-        </div>
-        <div id="SECTION19" class='ladi-section'>
-            <div class='ladi-section-background'></div>
-            <div class="ladi-container"></div>
         </div>
         <div id="SECTION22" class='ladi-section'>
             <div class='ladi-section-background'></div>
@@ -5031,8 +5023,8 @@
     </style>
 
     <!-- Audio -->
-    <audio id="background-music" loop="" muted="muted" playsinline>
-        <source src="https://files.catbox.moe/zfctma.mp3" type="audio/mpeg">
+    <audio id="background-music" loop muted autoplay playsinline>
+        <source src="https://files.catbox.moe/259nxa.mp3" type="audio/mpeg">
         Trình duyệt không hỗ trợ HTML5 Audio.
     </audio>
 
@@ -5040,70 +5032,64 @@
     <button id="toggle-music" aria-label="Bật/tắt nhạc">🔇</button>
 
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const audio = document.getElementById("background-music");
-            const btn = document.getElementById("toggle-music");
+document.addEventListener("DOMContentLoaded", function () {
 
-            if (!audio || !btn) return;
+    const audio = document.getElementById("background-music");
+    const btn = document.getElementById("toggle-music");
 
-            audio.volume = 0.8;
+    if (!audio || !btn) return;
 
-            // Hàm cập nhật UI
-            function updateUI() {
-                if (!audio.paused) {
-                    btn.textContent = "🔊";
-                    btn.classList.add("playing");
-                } else {
-                    btn.textContent = "🔇";
-                    btn.classList.remove("playing");
-                }
-            }
+    audio.volume = 0.8;
 
-            // Hàm play nhạc - bỏ muted để nghe được
-            function playMusic() {
-                audio.play().then(() => {
-                    // Ngay sau khi play được, bỏ muted để nghe được
-                    audio.muted = false;
-                    updateUI();
-                }).catch((err) => {
-                    console.log("Lỗi phát nhạc:", err);
-                });
-            }
+    function updateUI() {
+        if (!audio.paused) {
+            btn.textContent = "🔊";
+            btn.classList.add("playing");
+        } else {
+            btn.textContent = "🔇";
+            btn.classList.remove("playing");
+        }
+    }
 
-            // Hàm pause nhạc
-            function pauseMusic() {
-                audio.pause();
-                updateUI();
-            }
-
-            // Khi user click button thì toggle play/pause
-            btn.addEventListener("click", function(e) {
-                e.stopPropagation();
-                if (audio.paused) {
-                    playMusic();
-                } else {
-                    pauseMusic();
-                }
-            });
-
-            // Play ngay khi page load
-            playMusic();
-
-            // Nếu play không được ngay, thử lại khi user tương tác
-            function tryPlayAgain() {
-                if (audio.paused) {
-                    playMusic();
-                }
-            }
-            window.addEventListener("scroll", tryPlayAgain, { once: true });
-            document.addEventListener("click", tryPlayAgain, { once: true });
-            document.addEventListener("touchstart", tryPlayAgain, { once: true });
-
-            // Cập nhật UI khi audio trạng thái thay đổi
-            audio.addEventListener("play", updateUI);
-            audio.addEventListener("pause", updateUI);
+    function playMusic() {
+        audio.muted = false;
+        audio.play().then(updateUI).catch(err=>{
+            console.log("Play blocked:", err);
         });
-    </script>
+    }
+
+    function pauseMusic() {
+        audio.pause();
+        updateUI();
+    }
+
+    // Toggle button
+    btn.addEventListener("click", function(e){
+        e.stopPropagation();
+        audio.paused ? playMusic() : pauseMusic();
+    });
+
+    // Autoplay muted khi load
+    audio.play().catch(()=>{});
+
+    // Khi user tương tác thì bật tiếng
+    function handleUserInteraction() {
+        if (audio.muted) {
+            audio.muted = false;
+            audio.play().catch(()=>{});
+        }
+    }
+
+    // Bắt cả click, scroll, touch và drag trên điện thoại
+    ["click","scroll","touchstart","touchmove","touchend","pointerdown"].forEach(event => {
+        document.addEventListener(event, handleUserInteraction, { once:true });
+    });
+
+    audio.addEventListener("play", updateUI);
+    audio.addEventListener("pause", updateUI);
+
+});
+</script>
 </body>
 
 </html>
