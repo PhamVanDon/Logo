@@ -5031,9 +5031,8 @@
     <!-- Toggle button -->
     <button id="toggle-music" aria-label="Bật/tắt nhạc">🔇</button>
 
-    <script>
+    <script>javascript
 document.addEventListener("DOMContentLoaded", function () {
-
     const audio = document.getElementById("background-music");
     const btn = document.getElementById("toggle-music");
 
@@ -5053,7 +5052,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function playMusic() {
         audio.muted = false;
-        audio.play().then(updateUI).catch(err=>{
+        audio.play().then(updateUI).catch(err => {
             console.log("Play blocked:", err);
         });
     }
@@ -5064,30 +5063,36 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     // Toggle button
-    btn.addEventListener("click", function(e){
+    btn.addEventListener("click", function(e) {
+        e.stopPropagation();
+        audio.paused ? playMusic() : pauseMusic();
+    });
+
+    btn.addEventListener("touchend", function(e) {
+        e.preventDefault();
         e.stopPropagation();
         audio.paused ? playMusic() : pauseMusic();
     });
 
     // Autoplay muted khi load
-    audio.play().catch(()=>{});
+    audio.play().catch(() => {});
 
     // Khi user tương tác thì bật tiếng
     function handleUserInteraction() {
+        console.log('User interaction detected');
         if (audio.muted) {
             audio.muted = false;
-            audio.play().catch(()=>{});
+            audio.play().catch(() => {});
         }
     }
 
     // Bắt cả click, scroll, touch và drag trên điện thoại
-    ["click","scroll","touchstart","touchmove","touchend","pointerdown"].forEach(event => {
-        document.addEventListener(event, handleUserInteraction, { once:true });
+    ["click", "scroll", "touchstart", "touchmove", "touchend", "pointerdown"].forEach(event => {
+        document.addEventListener(event, handleUserInteraction, { once: true });
     });
 
     audio.addEventListener("play", updateUI);
     audio.addEventListener("pause", updateUI);
-
 });
 </script>
 </body>
